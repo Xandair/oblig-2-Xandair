@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="index.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+
+<h1>Bestilling av kinobiletter</h1>
+<label for="filmer">Velg Film:</label>
+<select name="filmer" id="filmer">
+    <option value="Encanto" selected="selected">Encanto</option>
+    <option value="Spider-man: No Way Home">Spider-man: No Way Home</option>
+    <option value="Zombieland 2">Zombieland 2</option>
+    <option value="Knives Out">Knives Out</option>
+</select>
+
+<br><br>
+<table>
+    <tr>
+        <td>Antall</td> <td><input type="text" id="antall" size="1" maxlength="2"/> <td> <div id="antallError" style="color:red"></div> </td>
+    </tr>
+
+</table>
+
+
+
+<br><br>
+
+<table>
+    <tr>
+        <td>Fornavn</td>
+        <td><input type="text" id="fornavn"/> </td> <td><div id="fornavnError" style="color:red"></div> </td>
+    </tr>
+    <tr>
+        <td>Etternavn</td>
+        <td><input type="text" id="etternavn"/></td> <td><div id="etternavnError" style="color:red"></div></td>
+    </tr>
+    <tr>
+        <td>Telefonnr</td>
+        <td><input type="text" id="telefonnr"/></td> <td><div id="telefonnrError" style="color:red"></div></td>
+    </tr>
+    <tr>
+        <td>Epost</td>
+        <td><input type="text" id="epost"/></td> <td><div id="epostError" style="color:red"></div></td>
+    </tr>
+    <tr>
+        <td><button value="Kjøp billett" id="kjøp" onclick="kjopServer()">Kjøp bilett</button> </td>
+    </tr>
+</table>
+
+
+<h2>Alle billetter</h2>
+<table id="billetter"></table>
+<button value="Slett alle billettene" id="slett" onclick="slett()">Slett alle billettene</button>
+</body>
+
+<script>
+    error = true
+    function kjopServer() {
+        let billett;
+        billett = {
+
+            film: $("#filmer").val(),
+            antall: $("#antall").val(),
+            fornavn: $("#fornavn").val(),
+            etternavn: $("#etternavn").val(),
+            telefonnr: $("#telefonnr").val(),
+            epost: $("#epost").val()
+        };
+        $.post("/lagre", billett, function() {
+            hentAlle();
+        });
+        $("#antall").val("");
+        $("#fornavn").val("");
+        $("#etternavn").val("");
+        $("#telefonnr").val("");
+        $("#epost").val("");
+    }
+
+    function hentAlle() {
+        $.get("/hentAlle", function(data) {
+            formaterData(data);
+        });
+    }
+
+    function formaterData(billetter) {
+        let ut = "<tr><td> Film </td><td> Antall </td><td> Fornavn </td><td> Etternavn </td><td> telefonnr </td><td> epost </td></tr>";
+        for(let i of billetter) {
+            ut +=  " <tr><td> " + i.film + " </td><td> " + i.antall + " </td><td> " + i.fornavn + " </td><td> " + i.etternavn + " </td><td> " + i.telefonnr + " </td><td> " + i.epost + " </td></tr> ";
+        }
+
+        $("#billetter").html(ut); }
+
+</script>
+</html>
